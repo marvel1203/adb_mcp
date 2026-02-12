@@ -96,7 +96,7 @@ npx adb-mcp
 
 您应该看到：
 ```
-ADB MCP Server running on stdio
+ADB MCP 服务器运行在 stdio
 ```
 
 ### 可用工具
