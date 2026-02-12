@@ -217,13 +217,13 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       },
       {
         name: "adb_package_manager",
-        description: "Execute Package Manager (pm) commands - list packages, grant/revoke permissions",
+        description: "Execute Package Manager (pm) commands - list packages, grant/revoke permissions. Note: Arguments with spaces should avoid complex quoting.",
         inputSchema: {
           type: "object",
           properties: {
             command: {
               type: "string",
-              description: "Package manager command (e.g., 'list packages', 'grant <package> <permission>')",
+              description: "Package manager command (e.g., 'list packages', 'grant <package> <permission>'). Simple space-separated arguments only.",
             },
             device_serial: {
               type: "string",
@@ -235,13 +235,13 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       },
       {
         name: "adb_activity_manager",
-        description: "Execute Activity Manager (am) commands - start activities, broadcast intents",
+        description: "Execute Activity Manager (am) commands - start activities, broadcast intents. Note: Arguments with spaces should avoid complex quoting.",
         inputSchema: {
           type: "object",
           properties: {
             command: {
               type: "string",
-              description: "Activity manager command (e.g., 'start -n <component>', 'broadcast -a <action>')",
+              description: "Activity manager command (e.g., 'start -n <component>', 'broadcast -a <action>'). Simple space-separated arguments only.",
             },
             device_serial: {
               type: "string",
@@ -377,7 +377,8 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           device_serial?: string;
         };
         const serial = await getDeviceSerial(device_serial);
-        const remotePath = "/sdcard/screenshot.png";
+        const timestamp = Date.now();
+        const remotePath = `/sdcard/screenshot_${timestamp}.png`;
         
         // Take screenshot on device
         await executeAdb(["-s", serial, "shell", "screencap", "-p", remotePath]);
@@ -401,7 +402,8 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       case "adb_ui_hierarchy": {
         const { device_serial } = args as { device_serial?: string };
         const serial = await getDeviceSerial(device_serial);
-        const remotePath = "/sdcard/window_dump.xml";
+        const timestamp = Date.now();
+        const remotePath = `/sdcard/window_dump_${timestamp}.xml`;
         
         // Dump UI hierarchy
         await executeAdb(["-s", serial, "shell", "uiautomator", "dump", remotePath]);
