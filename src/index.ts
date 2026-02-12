@@ -29,7 +29,7 @@ async function executeAdb(args: string[]): Promise<string> {
     
     return stdout || stderr;
   } catch (error: any) {
-    throw new Error(`ADB command failed: ${error.message}`);
+    throw new Error(`ADB 命令执行失败: ${error.message}`);
   }
 }
 
@@ -43,11 +43,11 @@ async function getDeviceSerial(deviceSerial?: string): Promise<string> {
   const lines = output.split("\n").filter((line) => line.trim() && !line.includes("List of devices"));
   
   if (lines.length === 0) {
-    throw new Error("No devices connected");
+    throw new Error("未连接设备");
   }
   
   if (lines.length > 1) {
-    throw new Error("Multiple devices connected. Please specify device_serial parameter");
+    throw new Error("连接了多个设备。请指定 device_serial 参数");
   }
   
   const serial = lines[0].split("\t")[0];
@@ -73,7 +73,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
     tools: [
       {
         name: "adb_devices",
-        description: "List all connected Android devices",
+        description: "列出所有已连接的 Android 设备",
         inputSchema: {
           type: "object",
           properties: {},
@@ -81,17 +81,17 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       },
       {
         name: "adb_shell",
-        description: "Execute a shell command on the Android device",
+        description: "在 Android 设备上执行 shell 命令",
         inputSchema: {
           type: "object",
           properties: {
             command: {
               type: "string",
-              description: "Shell command to execute",
+              description: "要执行的 shell 命令",
             },
             device_serial: {
               type: "string",
-              description: "Device serial number (optional if only one device)",
+              description: "设备序列号（如果只有一个设备则可选）",
             },
           },
           required: ["command"],
@@ -99,21 +99,21 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       },
       {
         name: "adb_install",
-        description: "Install an APK file on the device",
+        description: "在设备上安装 APK 文件",
         inputSchema: {
           type: "object",
           properties: {
             apk_path: {
               type: "string",
-              description: "Local path to the APK file",
+              description: "APK 文件的本地路径",
             },
             device_serial: {
               type: "string",
-              description: "Device serial number (optional if only one device)",
+              description: "设备序列号（如果只有一个设备则可选）",
             },
             reinstall: {
               type: "boolean",
-              description: "Reinstall the app if it already exists (default: false)",
+              description: "如果应用已存在则重新安装（默认：false）",
             },
           },
           required: ["apk_path"],
@@ -121,42 +121,42 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       },
       {
         name: "adb_logcat",
-        description: "View device logs with optional filtering",
+        description: "查看设备日志，支持可选过滤",
         inputSchema: {
           type: "object",
           properties: {
             filter: {
               type: "string",
-              description: "Filter expression (e.g., 'ActivityManager:I *:S')",
+              description: "过滤表达式（例如：'ActivityManager:I *:S'）",
             },
             device_serial: {
               type: "string",
-              description: "Device serial number (optional if only one device)",
+              description: "设备序列号（如果只有一个设备则可选）",
             },
             max_lines: {
               type: "number",
-              description: "Maximum number of lines to return (default: 100)",
+              description: "返回的最大行数（默认：100）",
             },
           },
         },
       },
       {
         name: "adb_pull",
-        description: "Pull a file from the device to the local system",
+        description: "从设备拉取文件到本地系统",
         inputSchema: {
           type: "object",
           properties: {
             remote_path: {
               type: "string",
-              description: "Path on the device",
+              description: "设备上的路径",
             },
             local_path: {
               type: "string",
-              description: "Local destination path",
+              description: "本地目标路径",
             },
             device_serial: {
               type: "string",
-              description: "Device serial number (optional if only one device)",
+              description: "设备序列号（如果只有一个设备则可选）",
             },
           },
           required: ["remote_path", "local_path"],
@@ -164,21 +164,21 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       },
       {
         name: "adb_push",
-        description: "Push a file from the local system to the device",
+        description: "从本地系统推送文件到设备",
         inputSchema: {
           type: "object",
           properties: {
             local_path: {
               type: "string",
-              description: "Local file path",
+              description: "本地文件路径",
             },
             remote_path: {
               type: "string",
-              description: "Destination path on the device",
+              description: "设备上的目标路径",
             },
             device_serial: {
               type: "string",
-              description: "Device serial number (optional if only one device)",
+              description: "设备序列号（如果只有一个设备则可选）",
             },
           },
           required: ["local_path", "remote_path"],
@@ -186,17 +186,17 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       },
       {
         name: "adb_screenshot",
-        description: "Take a screenshot of the device screen",
+        description: "截取设备屏幕截图",
         inputSchema: {
           type: "object",
           properties: {
             output_path: {
               type: "string",
-              description: "Local path to save the screenshot",
+              description: "保存截图的本地路径",
             },
             device_serial: {
               type: "string",
-              description: "Device serial number (optional if only one device)",
+              description: "设备序列号（如果只有一个设备则可选）",
             },
           },
           required: ["output_path"],
@@ -204,30 +204,30 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       },
       {
         name: "adb_ui_hierarchy",
-        description: "Get the UI hierarchy in XML format for UI analysis",
+        description: "获取 XML 格式的 UI 层次结构用于 UI 分析",
         inputSchema: {
           type: "object",
           properties: {
             device_serial: {
               type: "string",
-              description: "Device serial number (optional if only one device)",
+              description: "设备序列号（如果只有一个设备则可选）",
             },
           },
         },
       },
       {
         name: "adb_package_manager",
-        description: "Execute Package Manager (pm) commands - list packages, grant/revoke permissions. Note: Arguments with spaces should avoid complex quoting.",
+        description: "执行包管理器（pm）命令 - 列出软件包、授予/撤销权限。注意：带空格的参数应避免复杂的引号。",
         inputSchema: {
           type: "object",
           properties: {
             command: {
               type: "string",
-              description: "Package manager command (e.g., 'list packages', 'grant <package> <permission>'). Simple space-separated arguments only.",
+              description: "包管理器命令（例如：'list packages'、'grant <package> <permission>'）。仅支持简单的空格分隔参数。",
             },
             device_serial: {
               type: "string",
-              description: "Device serial number (optional if only one device)",
+              description: "设备序列号（如果只有一个设备则可选）",
             },
           },
           required: ["command"],
@@ -235,17 +235,17 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       },
       {
         name: "adb_activity_manager",
-        description: "Execute Activity Manager (am) commands - start activities, broadcast intents. Note: Arguments with spaces should avoid complex quoting.",
+        description: "执行活动管理器（am）命令 - 启动活动、广播意图。注意：带空格的参数应避免复杂的引号。",
         inputSchema: {
           type: "object",
           properties: {
             command: {
               type: "string",
-              description: "Activity manager command (e.g., 'start -n <component>', 'broadcast -a <action>'). Simple space-separated arguments only.",
+              description: "活动管理器命令（例如：'start -n <component>'、'broadcast -a <action>'）。仅支持简单的空格分隔参数。",
             },
             device_serial: {
               type: "string",
-              description: "Device serial number (optional if only one device)",
+              description: "设备序列号（如果只有一个设备则可选）",
             },
           },
           required: ["command"],
@@ -393,7 +393,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           content: [
             {
               type: "text",
-              text: `Screenshot saved to ${output_path}`,
+              text: `截图已保存到 ${output_path}`,
             },
           ],
         };
@@ -459,14 +459,14 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       default:
-        throw new Error(`Unknown tool: ${name}`);
+        throw new Error(`未知工具: ${name}`);
     }
   } catch (error: any) {
     return {
       content: [
         {
           type: "text",
-          text: `Error: ${error.message}`,
+          text: `错误: ${error.message}`,
         },
       ],
       isError: true,
@@ -478,10 +478,10 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
-  console.error("ADB MCP Server running on stdio");
+  console.error("ADB MCP 服务器运行在 stdio");
 }
 
 main().catch((error) => {
-  console.error("Fatal error:", error);
+  console.error("致命错误:", error);
   process.exit(1);
 });
